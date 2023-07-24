@@ -1,0 +1,11 @@
+# Ignore Node.js modules
+node_modules/
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.production
+.env.test
+
+.wwebjs_auth
+.wwebjs_cache
