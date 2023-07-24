@@ -26,16 +26,21 @@ const transporter = nodemailer.createTransport({
 });
 
 async function handleMailSend() {
-  jsonData = fetchJSON();
-  const info = await transporter.sendMail({
-    from: process.env.sender, // sender address
-    to: process.env.receiver, // list of receivers
-    subject: `${jsonData.date} Division Report`, // Subject line
-    text: "Here is the report as requested !", // plain text body
-    html: JSON.stringify(jsonData.sections), // html body
-  });
-
-  console.log("Message sent: %s", info.messageId);
+  try {
+    jsonData = fetchJSON();
+    const info = await transporter.sendMail({
+      from: process.env.sender, // sender address
+      to: process.env.receiver, // list of receivers
+      subject: `${jsonData.date} Division Report`, // Subject line
+      text: "Here is the report as requested !", // plain text body
+      html: JSON.stringify(jsonData.sections), // html body
+    });
+    console.log("mailed it");
+    return "✅";
+  } catch (error) {
+    console.log("error sending the message: ", error);
+    return "❌";
+  }
 }
 
 module.exports = { handleMailSend };

@@ -25,12 +25,13 @@ const reportPattern = /(!C)/g;
 
 dateSetter(new Date().toLocaleDateString());
 
-client.on("message", (message) => {
+client.on("message", async (message) => {
   if (message.body.match(activationPattern)) {
     if (message.body.match(reportPattern)) dataSetter(processMessage(message));
     else if (message.body.match(mailPattern)) {
-      handleMailSend();
-      message.react("✅");
+      message.react("⌛");
+      const reaction = await handleMailSend();
+      message.react(reaction);
     }
   } //this will pass along the message component to the messageOperations file
 });

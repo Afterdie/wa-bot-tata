@@ -5,7 +5,7 @@ function dateSetter(date) {
   let jsonDateObject = `{\n\t\"date\": \"${date}\",\n\t\"sections\":[]\n}`;
   fs.writeFile(filePath, jsonDateObject, "utf-8", (writerr) => {
     if (writerr) console.log("error writing to file");
-    else console.log("success setting date");
+    else console.log("Date set successfully");
   });
 }
 
@@ -18,7 +18,11 @@ function dataSetter(newObj) {
     fs.writeFile(filePath, updatedJsonData, "utf-8", (writeerr) => {
       if (writeerr) {
         console.log("error writing file");
-      } else console.log("successfully wrote to file");
+      } else
+        console.log(
+          "successfully wrote to file",
+          new Date().toLocaleTimeString()
+        );
     });
   });
 }
