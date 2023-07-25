@@ -5,14 +5,6 @@ const { processMessage } = require("./messageOperations");
 const { dateSetter, dataSetter } = require("./dataread");
 const { handleMailSend } = require("./mailHandler");
 
-const patterns = {
-  activation: /(!w)/g,
-  mail: /(!mail)/g,
-  report: /(!C)/g,
-};
-
-const cronSequence = "0 23 * * *"; //makes it run at 2300 hrs everyday
-
 const client = new Client({
   authStrategy: new LocalAuth(),
 });
@@ -27,10 +19,18 @@ client.on("ready", () => {
 
 client.initialize();
 
+const cronSequence = "0 23 * * *"; //makes it run at 2300 hrs everyday
+
 cron.schedule(cronSequence, () => {
   dateSetter(new Date().toLocaleDateString());
   handleMailSend();
 });
+
+const patterns = {
+  activation: /(!w)/g,
+  mail: /(!mail)/g,
+  report: /(!C)/g,
+};
 
 client.on("message", async (message) => {
   if (message.body.match(patterns.activation)) {
