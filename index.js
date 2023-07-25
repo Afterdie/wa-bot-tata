@@ -4,6 +4,7 @@ const { Client, LocalAuth } = require("whatsapp-web.js");
 const { processMessage } = require("./messageOperations");
 const { dateSetter, dataSetter } = require("./dataread");
 const { handleMailSend } = require("./mailHandler");
+const { handleNewUser } = require("./registerUser");
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -15,6 +16,7 @@ client.on("qr", (qr) => {
 
 client.on("ready", () => {
   console.log("Server Started: ", new Date().toLocaleTimeString());
+  console.log("Listening for new messages...");
 });
 
 client.initialize();
@@ -27,12 +29,14 @@ cron.schedule(cronSequence, () => {
 });
 
 const patterns = {
-  activation: /(!w)/g,
+  activation: /(!\w)/g,
   mail: /(!mail)/g,
   report: /(!C)/g,
+  setMail: /(!set)/g,
 };
 
 client.on("message", async (message) => {
+  handleNewUser(message);
   if (message.body.match(patterns.activation)) {
     if (message.body.match(patterns.report))
       dataSetter(processMessage(message));
@@ -40,6 +44,8 @@ client.on("message", async (message) => {
       message.react("⌛");
       const reaction = await handleMailSend();
       message.react(reaction);
+    } else if (message.body.match(patterns.setMail)) {
+      handleNewUser(message.body);
     }
   } //this will pass along the message component to the messageOperations file
 });
