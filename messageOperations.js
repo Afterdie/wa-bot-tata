@@ -27,17 +27,21 @@ const heatProduction = (productionString) => {
 };
 
 function processMessage(message) {
-  const divisionPattern = /(CC#\d)/g;
-  const heatProductionPattern = /(?<=CC#\d:\s)(.*)/g;
-  const heatTypePattern = /(?<=Sequence:\*\s)(.*)/g;
-  const strandLossPattern = /(?<=Strand loss:\*\s)(.*)/g;
+  const patterns = {
+    division: /(CC#\d)/g,
+    heatProduction: /(?<=CC#\d:\s)(.*)/g,
+    heatType: /(?<=Sequence:\*\s)(.*)/g,
+    sequenceBreak: /(?<=Sequence break:\* )(.*)/g,
+    strandLoss: /(?<=Strand loss:\*\s)(.*)/g,
+  };
 
   var data = {
-    timestamp: message.timestamp * 1000,
-    division: message.body.match(divisionPattern)[0].trim(),
-    production: heatProduction(message.body.match(heatProductionPattern)[0]),
-    types: heatTypes(message.body.match(heatTypePattern)[0]),
-    lossReason: message.body.match(strandLossPattern)[0].trim(),
+    timestamp: new Date(message.timestamp * 1000).toLocaleTimeString(),
+    division: message.body.match(patterns.division)[0].trim(),
+    production: heatProduction(message.body.match(patterns.heatProduction)[0]),
+    types: heatTypes(message.body.match(patterns.heatType)[0]),
+    break: message.body.match(patterns.sequenceBreak)[0].trim(),
+    lossReason: message.body.match(patterns.strandLoss)[0].trim(),
   };
   return data;
 }
